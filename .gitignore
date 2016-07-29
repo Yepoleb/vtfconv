@@ -5,5 +5,5 @@
 *.workspace
 
 # Build files
-obj
+*.o
 vtfconv
