@@ -1,0 +1,9 @@
+# Codelite project
+.clang
+.codelite
+*.project
+*.workspace
+
+# Build files
+obj
+vtfconv
