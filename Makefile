@@ -1,7 +1,7 @@
 CXX=g++
 CXXFLAGS=-std=c++11 `Magick++-config --cppflags --cxxflags`
 LDFLAGS=`Magick++-config --ldflags`
-LIBS=-lVTFLib13 -lgflags `Magick++-config --libs`
+LIBS=-lVTFLib13 `Magick++-config --libs`
 
 .PHONY: all
 all: vtfconv
