@@ -16,7 +16,15 @@ Magick::Image load_bitmap(const std::string& path)
 {
     // Load source file
     Magick::Image image;
-    image.read(path);
+    try {
+        image.read(path);
+    } catch(Magick::ErrorMissingDelegate) {
+        std::cerr << "Unsupported input image format" << std::endl;
+        exit(1);
+    } catch(Magick::ErrorCorruptImage) {
+        std::cerr << "Failed to decode input image" << std::endl;
+        exit(1);
+    }
     return std::move(image);
 }
 
@@ -35,8 +43,9 @@ CVTFFile convert_bitmap(Magick::Image& image)
 {
     // Get size
     Magick::Geometry imgsize = image.size();
-    int width = imgsize.width();
-    int height = imgsize.height();
+    // Needs testing
+    int width = image.columns();
+    int height = image.rows();
 
     // Create baseimage
     CVTFFile baseimage;
