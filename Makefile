@@ -17,6 +17,5 @@ vtfconv: vtfconv.o formatnames.o
 
 .PHONY: clean
 clean:
-	rm -rf *.o
-	rm -f vtfconv
+	rm -f *.o vtfconv
 
