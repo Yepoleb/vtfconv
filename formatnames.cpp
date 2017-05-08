@@ -1,11 +1,12 @@
 #include <vector>
 #include <string>
+#include <stddef.h>
 
 #include "VTFLib13/VTFFormat.h"
 
 #include "common.hpp"
 
-const std::vector<std::string> FORMATNAMES = {
+const char* FORMATNAMES[] = {
     "RGBA8888",
     "ABGR8888",
     "RGB888",
@@ -47,14 +48,17 @@ const std::vector<std::string> FORMATNAMES = {
     "ATI1N"
 };
 
+const size_t FORMATNAMES_SIZE = ARRAY_SIZE(FORMATNAMES);
+
 VTFImageFormat parse_format(std::string formatstr)
 {
     formatstr = upper(formatstr);
-    const auto iter = std::find(FORMATNAMES.begin(), FORMATNAMES.end(), formatstr);
-    if (iter == FORMATNAMES.end()) {
-        return IMAGE_FORMAT_NONE;
-    } else {
-        int index = std::distance(FORMATNAMES.begin(), iter);
-        return static_cast<VTFImageFormat>(index);
+
+    for (size_t i = 0; i < FORMATNAMES_SIZE; i++) {
+        if (formatstr == FORMATNAMES[i]) {
+            return static_cast<VTFImageFormat>(i);
+        }
     }
+
+    return IMAGE_FORMAT_NONE;
 }

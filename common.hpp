@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cctype>
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
+
 inline std::string upper(std::string str)
 {
     std::transform(str.begin(), str.end(), str.begin(), ::toupper);

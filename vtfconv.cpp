@@ -1,11 +1,10 @@
 #include <iostream>
 #include <string>
-#include <utility>
 
-#include <VTFLib13/VTFLib.h>
-#include <VTFLib13/VTFFile.h>
-#include <Magick++.h>
-#include <tclap/CmdLine.h>
+#include "VTFLib13/VTFLib.h"
+#include "VTFLib13/VTFFile.h"
+#include "Magick++.h"
+#include "tclap/CmdLine.h"
 
 #include "formatnames.hpp"
 #include "common.hpp"
@@ -25,7 +24,7 @@ Magick::Image load_bitmap(const std::string& path)
         std::cerr << "Failed to decode input image" << std::endl;
         exit(1);
     }
-    return std::move(image);
+    return image;
 }
 
 CVTFFile load_vtf(const std::string& path)
@@ -36,7 +35,7 @@ CVTFFile load_vtf(const std::string& path)
         std::cerr << "Failed to load .vtf file." << std::endl;
         exit(1);
     }
-    return std::move(vtf);
+    return vtf;
 }
 
 CVTFFile convert_bitmap(Magick::Image& image)
@@ -49,11 +48,14 @@ CVTFFile convert_bitmap(Magick::Image& image)
 
     // Create baseimage
     CVTFFile baseimage;
-    baseimage.Create(width, height);
+    if (!baseimage.Create(width, height)) {
+        std::cerr << "Failed to create VTF image surface" << std::endl;
+        exit(1);
+    }
     image.write(0, 0, width, height, "RGBA", Magick::CharPixel,
         baseimage.GetData(0, 0, 0, 0));
 
-    return std::move(baseimage);
+    return baseimage;
 }
 
 CVTFFile convert_vtf(CVTFFile& vtf)
@@ -69,7 +71,7 @@ CVTFFile convert_vtf(CVTFFile& vtf)
         vtf.GetFormat(), baseimage.GetFormat()
     );
 
-    return std::move(baseimage);
+    return baseimage;
 }
 
 void save_vtf(
@@ -192,12 +194,16 @@ int main(int argc, char* argv[])
             outformat = get_vtf_format(has_alpha(image));
         }
         save_vtf(baseimage, outformat, outpath);
-    } else if (mode == ProgramMode::VTF2BMP) {
+    }
+
+    else if (mode == ProgramMode::VTF2BMP) {
         CVTFFile vtf = load_vtf(inpath);
         CVTFFile baseimage = convert_vtf(vtf);
         Magick::ImageType outformat = get_bitmap_format(has_alpha(vtf));
         save_bitmap(baseimage, outformat, outpath);
-    } else if (mode == ProgramMode::INFO) {
+    }
+
+    else if (mode == ProgramMode::INFO) {
         CVTFFile vtf = load_vtf(inpath);
         VTFImageFormat format = vtf.GetFormat();
         SVTFImageFormatInfo format_info = CVTFFile::GetImageFormatInfo(format);
